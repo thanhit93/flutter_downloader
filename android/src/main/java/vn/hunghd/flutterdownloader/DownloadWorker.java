@@ -24,7 +24,6 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -363,7 +362,6 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
                     }
 
                     if (clickToOpenDownloadedFile && storage == PackageManager.PERMISSION_GRANTED) {
-                        Toast.makeText(getApplicationContext(), "Mở từ thông báo", Toast.LENGTH_SHORT).show();
                         Intent intent = IntentUtils.validatedFileIntent(getApplicationContext(), saveFilePath, contentType);
                         if (intent != null) {
                             log("Setting an intent to open the file " + saveFilePath);
@@ -535,14 +533,7 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
 
             if (status == DownloadStatus.FAILED || status == DownloadStatus.CANCELED || status == DownloadStatus.COMPLETE) {
                 try {
-                    final Handler handler = new Handler();
-                    final Context ctx = context;
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            clearNotification(ctx);
-                        }
-                    }, 2000);
+                    clearNotification(context);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
