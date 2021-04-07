@@ -90,6 +90,9 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
     private String msgStarted, msgInProgress, msgCanceled, msgFailed, msgPaused, msgComplete;
     private long lastCallUpdateNotification = 0;
 
+    // Encrypt file
+    Encrypter encrypter;
+
     public DownloadWorker(@NonNull final Context context,
                           @NonNull WorkerParameters params) {
         super(context, params);
@@ -100,6 +103,16 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
                 startBackgroundIsolate(context);
             }
         });
+
+        try {
+            initEncrypter();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initEncrypter() throws NoSuchAlgorithmException {
+        encrypter =new Encrypter();
     }
 
     private void startBackgroundIsolate(Context context) {
@@ -194,7 +207,7 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
         File partialFile = new File(saveFilePath);
         if (partialFile.exists()) {
             isResume = true;
-            log("exists file for "+ filename + "automatic resuming...");
+            log("exists file for " + filename + "automatic resuming...");
         }
 
         try {
@@ -381,6 +394,29 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
                 }
                 updateNotification(context, filename, status, progress, pendingIntent, true);
                 taskDao.updateTask(getId().toString(), status, progress);
+
+//                if (status == DownloadStatus.COMPLETE) {
+//                    // encrypt file
+//                    try {
+//                        String[] splitFileNames = filename.split("\\.");
+//                        String newFileName = splitFileNames.length > 0 ? splitFileNames[0] : filename;
+//                        String outputPath = savedDir + File.separator + newFileName + ".swf";
+//                        Uri outPutUri = Uri.parse(outputPath);
+//                        String key = encrypter.encryptFile(saveFilePath, outPutUri);
+//
+//                        //https://stackoverflow.com/questions/23024831/android-shared-preferences-for-creating-one-time-activity-example
+//                        SharedPreferences.Editor editor = getApplicationContext().getSharedPreferences("MY_PREFS_NAME",
+//                                MODE_PRIVATE).edit();
+//                        editor.putString(outputPath, key);
+//                        editor.apply();
+//                        File out = new File(saveFilePath);
+//                        if (out.exists()) {
+//                            out.delete();
+//                        }
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
 
                 log(isStopped() ? "Download canceled" : "File downloaded");
             } else {
