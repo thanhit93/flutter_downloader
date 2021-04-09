@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -319,7 +320,12 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
 
             if ((responseCode == HttpURLConnection.HTTP_OK || (isResume && responseCode == HttpURLConnection.HTTP_PARTIAL)) && !isStopped()) {
                 String contentType = httpConn.getContentType();
-                long contentLength = httpConn.getContentLengthLong();
+                long contentLength;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                    contentLength = httpConn.getContentLengthLong();
+                } else {
+                    contentLength = httpConn.getContentLength();
+                }
                 log("Content-Type = " + contentType);
                 log("Content-Length = " + contentLength);
 

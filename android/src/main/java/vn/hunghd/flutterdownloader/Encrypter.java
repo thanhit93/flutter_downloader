@@ -1,4 +1,4 @@
-package android.src.main.java.vn.hunghd.flutterdownloader;
+package vn.hunghd.flutterdownloader;
 
 import android.net.Uri;
 import android.util.Base64;
