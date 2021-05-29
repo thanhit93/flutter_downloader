@@ -92,7 +92,7 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
     private long lastCallUpdateNotification = 0;
 
     // Encrypt file
-    Encrypter encrypter;
+    android.src.main.java.vn.hunghd.flutterdownloader.Encrypter encrypter;
 
     public DownloadWorker(@NonNull final Context context,
                           @NonNull WorkerParameters params) {
@@ -113,7 +113,7 @@ public class DownloadWorker extends Worker implements MethodChannel.MethodCallHa
     }
 
     private void initEncrypter() throws NoSuchAlgorithmException {
-        encrypter =new Encrypter();
+        encrypter =new android.src.main.java.vn.hunghd.flutterdownloader.Encrypter();
     }
 
     private void startBackgroundIsolate(Context context) {
